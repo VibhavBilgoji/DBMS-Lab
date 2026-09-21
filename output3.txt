@@ -1,0 +1,248 @@
+-- Lab 3 Exercise Outputs
+============================================================
+
+-- 1. Create tables Project and Works_on
+create table if not exists Project(
+    pno int primary key,
+    pname varchar(25) not null unique,
+    location varchar(25),
+    dnum tinyint,
+    foreign key (dnum) references Dept(deptno)
+);
+
+create table if not exists Works_on(
+    eno int,
+    pno int,
+    hours_per_week float,
+    primary key (eno, pno),
+    foreign key (eno) references Employee(empno),
+    foreign key (pno) references Project(pno)
+);
+
+-- desc Project;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pno      | int(11)     | NO   | PRI | NULL    |       |
+| pname    | varchar(25) | NO   | UNI | NULL    |       |
+| location | varchar(25) | YES  |     | NULL    |       |
+| dnum     | tinyint(4)  | YES  | MUL | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+
+-- desc Works_on;
++----------------+---------+------+-----+---------+-------+
+| Field          | Type    | Null | Key | Default | Extra |
++----------------+---------+------+-----+---------+-------+
+| eno            | int(11) | NO   | PRI | NULL    |       |
+| pno            | int(11) | NO   | PRI | NULL    |       |
+| hours_per_week | float   | YES  |     | NULL    |       |
++----------------+---------+------+-----+---------+-------+
+
+============================================================
+
+-- 2. Add foreign key fk1 on Employee(dept) references Dept(deptno)
+alter table Employee add constraint fk1 foreign key (dept) references Dept(deptno);
+
++----------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table    | Create Table                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
++----------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Employee | CREATE TABLE `Employee` (
+  `empno` int(11) NOT NULL,
+  `empname` varchar(25) NOT NULL,
+  `gender` varchar(1) DEFAULT NULL,
+  `job` varchar(25) DEFAULT NULL,
+  `managerno` int(11) DEFAULT NULL,
+  `hiredate` date DEFAULT NULL,
+  `salary` float DEFAULT NULL,
+  `commission` float DEFAULT NULL,
+  `dept` tinyint(4) DEFAULT NULL,
+  PRIMARY KEY (`empno`),
+  KEY `fk1` (`dept`),
+  CONSTRAINT `fk1` FOREIGN KEY (`dept`) REFERENCES `Dept` (`deptno`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci |
++----------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+============================================================
+
+-- 3. Add column bdate to Employee
+alter table Employee add column bdate date;
+
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| empno      | int(11)     | NO   | PRI | NULL    |       |
+| empname    | varchar(25) | NO   |     | NULL    |       |
+| gender     | varchar(1)  | YES  |     | NULL    |       |
+| job        | varchar(25) | YES  |     | NULL    |       |
+| managerno  | int(11)     | YES  |     | NULL    |       |
+| hiredate   | date        | YES  |     | NULL    |       |
+| salary     | float       | YES  |     | NULL    |       |
+| commission | float       | YES  |     | NULL    |       |
+| dept       | tinyint(4)  | YES  | MUL | NULL    |       |
+| bdate      | date        | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+
+============================================================
+
+-- 4. Add unique constraint uk1 on Dept(dname)
+alter table Dept add constraint uk1 unique (dname);
+
++-------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                                                                                           |
++-------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Dept  | CREATE TABLE `Dept` (
+  `deptno` tinyint(4) NOT NULL,
+  `dname` varchar(25) NOT NULL,
+  `location` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`deptno`),
+  UNIQUE KEY `uk1` (`dname`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci |
++-------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+============================================================
+
+-- 5. Set default 20 for Works_on(hours_per_week)
+alter table Works_on alter column hours_per_week set default 20;
+
++----------------+---------+------+-----+---------+-------+
+| Field          | Type    | Null | Key | Default | Extra |
++----------------+---------+------+-----+---------+-------+
+| eno            | int(11) | NO   | PRI | NULL    |       |
+| pno            | int(11) | NO   | PRI | NULL    |       |
+| hours_per_week | float   | YES  |     | 20      |       |
++----------------+---------+------+-----+---------+-------+
+
+============================================================
+
+-- 6. Modify column types to tinyint and re-add constraint
+ALTER TABLE Works_on DROP FOREIGN KEY `2`;
+alter table Project change column pno proj_num tinyint;
+ALTER TABLE Works_on MODIFY COLUMN pno tinyint;
+ALTER TABLE Works_on
+ADD CONSTRAINT `2`
+FOREIGN KEY (pno) REFERENCES Project(proj_num);
+
+-- desc Project;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| proj_num | tinyint(4)  | NO   | PRI | NULL    |       |
+| pname    | varchar(25) | NO   | UNI | NULL    |       |
+| location | varchar(25) | YES  |     | NULL    |       |
+| dnum     | tinyint(4)  | YES  | MUL | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+
+-- desc Works_on;
++----------------+------------+------+-----+---------+-------+
+| Field          | Type       | Null | Key | Default | Extra |
++----------------+------------+------+-----+---------+-------+
+| eno            | int(11)    | NO   | PRI | NULL    |       |
+| pno            | tinyint(4) | NO   | PRI | NULL    |       |
+| hours_per_week | float      | YES  |     | 20      |       |
++----------------+------------+------+-----+---------+-------+
+
+============================================================
+
+-- 7. Rename table Works_on to Emp_WorksOn_Project
+rename table Works_on to Emp_WorksOn_Project;
+
++-----------------------+
+| Tables_in_College_Sim |
++-----------------------+
+| Dept                  |
+| Emp_WorksOn_Project   |
+| Employee              |
+| Project               |
++-----------------------+
+
+============================================================
+
+-- 8. Modify column Dept(deptno) to tinyint
+alter table Dept modify column deptno tinyint;
+
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| deptno   | tinyint(4)  | NO   | PRI | NULL    |       |
+| dname    | varchar(25) | NO   | UNI | NULL    |       |
+| location | varchar(20) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+
+============================================================
+
+-- 9. Drop column bdate from Employee
+alter table Employee drop column bdate;
+
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| empno      | int(11)     | NO   | PRI | NULL    |       |
+| empname    | varchar(25) | NO   |     | NULL    |       |
+| gender     | varchar(1)  | YES  |     | NULL    |       |
+| job        | varchar(25) | YES  |     | NULL    |       |
+| managerno  | int(11)     | YES  |     | NULL    |       |
+| hiredate   | date        | YES  |     | NULL    |       |
+| salary     | float       | YES  |     | NULL    |       |
+| commission | float       | YES  |     | NULL    |       |
+| dept       | tinyint(4)  | YES  | MUL | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+
+============================================================
+
+-- 10. Backup database using mysqldump / mariadb-dump
+-- sudo mariadb-dump -u root -p College > College.sql
+(Backup command verified)
+
+============================================================
+
+-- 11. Create database DummyEmp
+create database if not exists DummyEmp;
+
++---------------------+
+| Database (DummyEmp) |
++---------------------+
+| DummyEmp            |
++---------------------+
+
+============================================================
+
+-- 12. Drop database DummyEmp
+drop database if exists DummyEmp;
+
+(Empty set - database successfully dropped)
+
+============================================================
+
+-- 13. Create table DummyProject as select * from Project and verify
+create table DummyProject as select * from Project;
+select * from DummyProject;
+
++----------+-----------------+----------+------+
+| proj_num | pname           | location | dnum |
++----------+-----------------+----------+------+
+|        1 | Cloud Computing | Panaji   |   15 |
+|        2 | DBMS            | Vasco    |   20 |
++----------+-----------------+----------+------+
+
+============================================================
+
+-- 14. Truncate table DummyProject
+truncate table DummyProject;
+select * from DummyProject;
+
+(Empty set)
+
+============================================================
+
+-- 15. Insert into DummyProject select * from Project and verify
+insert into DummyProject select * from Project;
+select * from DummyProject;
+
++----------+-----------------+----------+------+
+| proj_num | pname           | location | dnum |
++----------+-----------------+----------+------+
+|        1 | Cloud Computing | Panaji   |   15 |
+|        2 | DBMS            | Vasco    |   20 |
++----------+-----------------+----------+------+
+
+============================================================

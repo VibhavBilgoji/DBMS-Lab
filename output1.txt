@@ -1,0 +1,163 @@
+-- Lab 1 Exercise Outputs
+============================================================
+
+-- select * from Employee;
+select * from Employee;
+
++-------+---------+--------+-----------+-----------+------------+--------+------------+------+
+| empno | empname | gender | job       | managerno | hiredate   | salary | commission | dept |
++-------+---------+--------+-----------+-----------+------------+--------+------------+------+
+|     1 | Vibhav  | M      | Developer |        42 | 2026-08-15 |  45000 |      12000 |    1 |
++-------+---------+--------+-----------+-----------+------------+--------+------------+------+
+
+============================================================
+
+-- select * from Dept;
+select * from Dept;
+
+(Empty set)
+
+============================================================
+
+-- select empno, empname, job, hiredate from Employee;
+select empno, empname, job, hiredate from Employee;
+
++-------+---------+-----------+------------+
+| empno | empname | job       | hiredate   |
++-------+---------+-----------+------------+
+|     1 | Vibhav  | Developer | 2026-08-15 |
++-------+---------+-----------+------------+
+
+============================================================
+
+-- select empno, empname, job, salary from Employee where dept = 10;
+select empno, empname, job, salary from Employee where dept = 10;
+
+(Empty set)
+
+============================================================
+
+-- select empno, empname, job, salary from Employee where dept = 10;
+select empno, empname, job, salary from Employee where dept = 10;
+
++-------+---------+-------------+--------+
+| empno | empname | job         | salary |
++-------+---------+-------------+--------+
+|     1 | Vibhav  | President   |  95000 |
+|     2 | Walsh   | Analyst     |  45000 |
+|     4 | Shubham | Salesperson |  22000 |
++-------+---------+-------------+--------+
+
+============================================================
+
+-- select empname, salary from Employee where job = 'Clerk';
+select empname, salary from Employee where job = 'Clerk';
+
++---------+--------+
+| empname | salary |
++---------+--------+
+| Faiz    |  18000 |
+| Sparsh  |  21000 |
++---------+--------+
+
+============================================================
+
+-- select deptno, dname from Dept where deptno <= 20;
+select deptno, dname from Dept where deptno <= 20;
+
++--------+-------------+
+| deptno | dname       |
++--------+-------------+
+|     10 | Executive   |
+|     15 | Engineering |
+|     20 | Research    |
++--------+-------------+
+
+============================================================
+
+-- select empname from Employee where Salary < 25000;
+select empname from Employee where Salary < 25000;
+
++---------+
+| empname |
++---------+
+| Faiz    |
+| Shubham |
+| Sparsh  |
++---------+
+
+============================================================
+
+-- select empname from Employee where gender = 'F' and dept = 30 and salary > 30000;
+select empname from Employee where gender = 'F' and dept = 30 and salary > 30000;
+
++---------+
+| empname |
++---------+
+| Siya    |
++---------+
+
+============================================================
+
+-- select empname, salary, commission from Employee where commission > salary;
+select empname, salary, commission from Employee where commission > salary;
+
++---------+--------+------------+
+| empname | salary | commission |
++---------+--------+------------+
+| Shubham |  22000 |      30000 |
++---------+--------+------------+
+
+============================================================
+
+-- select empname, empno from Employee where job = "President";
+select empname, empno from Employee where job = "President";
+
++---------+-------+
+| empname | empno |
++---------+-------+
+| Vibhav  |     1 |
++---------+-------+
+
+============================================================
+
+-- select * from Employee where commission is NULL;
+select * from Employee where commission is NULL;
+
++-------+---------+--------+-----------+-----------+------------+--------+------------+------+
+| empno | empname | gender | job       | managerno | hiredate   | salary | commission | dept |
++-------+---------+--------+-----------+-----------+------------+--------+------------+------+
+|     1 | Vibhav  | M      | President |      NULL | 2024-01-15 |  95000 |       NULL |   10 |
+|     3 | Faiz    | M      | Clerk     |         2 | 2025-07-22 |  18000 |       NULL |   20 |
+|     5 | Sparsh  | M      | Clerk     |         2 | 2026-04-11 |  21000 |       NULL |   15 |
++-------+---------+--------+-----------+-----------+------------+--------+------------+------+
+
+============================================================
+
+-- select empname, empno from Employee where job = "Clerk" or job = "Analyst";
+select empname, empno from Employee where job = "Clerk" or job = "Analyst";
+
++---------+-------+
+| empname | empno |
++---------+-------+
+| Walsh   |     2 |
+| Faiz    |     3 |
+| Sparsh  |     5 |
++---------+-------+
+
+============================================================
+
+-- select distinct job from Employee;
+select distinct job from Employee;
+
++-------------+
+| job         |
++-------------+
+| President   |
+| Analyst     |
+| Clerk       |
+| Salesperson |
+| Manager     |
++-------------+
+
+============================================================
