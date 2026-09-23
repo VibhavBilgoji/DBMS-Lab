@@ -24,7 +24,7 @@ select count(*) as total_clerks
 from Employee
 where job = 'Clerk';
 
--- 7. list the number of employees working for the 'admin' dept and minimum salary offerred by the dept.
+-- 7. list the number of employees working for the 'admin' dept and minimum salary offered by the dept.
 select count(*) as total_employees, min(e.salary) as min_salary
 from Employee e
 join Dept d on e.dept = d.deptno
