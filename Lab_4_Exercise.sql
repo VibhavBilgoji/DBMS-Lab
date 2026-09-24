@@ -77,7 +77,7 @@ join Emp_WorksOn_Project w on e.empno = w.eno
 join Project p on w.pno = p.proj_num
 where e.job = 'Manager';
 
--- 14. list the name and the salary of the managers who are working on the 'Computerization' project for more than 15 houts per week.
+-- 14. list the name and the salary of the managers who are working on the 'Computerization' project for more than 15 hours per week.
 select distinct e.empname, e.salary
 from Employee e
 join Emp_WorksOn_Project w on e.empno = w.eno
