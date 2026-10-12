@@ -103,15 +103,30 @@ SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
 LOCK TABLES `Emp_WorksOn_Project` WRITE;
 /*!40000 ALTER TABLE `Emp_WorksOn_Project` DISABLE KEYS */;
 INSERT INTO `Emp_WorksOn_Project` VALUES
+(1,8,20),
 (2,1,15),
+(2,8,10),
+(3,1,10),
 (3,2,25),
 (3,6,20),
+(4,1,15),
 (4,4,12),
 (5,1,25),
 (6,3,20),
 (6,4,18),
+(7,3,15),
+(7,7,10),
 (8,3,30),
-(10,6,25);
+(9,4,20),
+(9,5,15),
+(10,2,15),
+(10,6,25),
+(11,3,20),
+(11,7,15),
+(12,3,10),
+(13,5,25),
+(13,6,20),
+(14,6,15);
 /*!40000 ALTER TABLE `Emp_WorksOn_Project` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -157,7 +172,11 @@ INSERT INTO `Employee` VALUES
 (7,'Ananya','F','Admin Officer',6,'2025-06-01',32000,3000,40),
 (8,'Rohan','M','Manager',1,'2024-08-15',55000,5000,40),
 (9,'Karan','M','Salesperson',1,'2025-09-01',26000,15000,30),
-(10,'Pooja','F','Analyst',2,'2025-08-15',40000,NULL,20);
+(10,'Pooja','F','Analyst',2,'2025-08-15',40000,NULL,20),
+(11,'Riya','F','Admin Officer',8,'2025-10-01',38000,2500,40),
+(12,'Sneha','F','HR Executive',8,'2025-11-15',42000,NULL,40),
+(13,'Kavita','F','Scientist',2,'2024-05-10',65000,NULL,20),
+(14,'Tanvi','F','Research Associate',2,'2025-01-20',35000,NULL,20);
 /*!40000 ALTER TABLE `Employee` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -196,7 +215,8 @@ INSERT INTO `Project` VALUES
 (4,'E-Commerce','Mumbai',30),
 (5,'AI System','Porvorim',30),
 (6,'Research','Vasco',20),
-(7,'Office Automation','Bengalore',40);
+(7,'Office Automation','Bengalore',40),
+(8,'Corporate Strategy','Mapusa',10);
 /*!40000 ALTER TABLE `Project` ENABLE KEYS */;
 UNLOCK TABLES;
 COMMIT;
@@ -242,4 +262,4 @@ SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2026-09-21  9:59:43
+-- Dump completed on 2026-09-28 10:46:35

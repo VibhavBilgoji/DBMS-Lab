@@ -1,0 +1,261 @@
+-- 1. Find out the number of employees in every dept. display the dept name and the count. Also display the maximum, minimum and the average salary offered by each dept.
+select d.dname,
+       count(e.empno) as emp_count,
+       max(e.salary) as max_salary,
+       min(e.salary) as min_salary,
+       round(avg(e.salary), 2) as avg_salary
+from Dept d
+join Employee e on d.deptno = e.dept
+group by d.deptno, d.dname;
+
++-------------+-----------+------------+------------+------------+
+| dname       | emp_count | max_salary | min_salary | avg_salary |
++-------------+-----------+------------+------------+------------+
+| Executive   |         3 |      95000 |      22000 |   54000.00 |
+| Engineering |         1 |      21000 |      21000 |   21000.00 |
+| Research    |         4 |      65000 |      18000 |   39500.00 |
+| Sales       |         2 |      60000 |      26000 |   43000.00 |
+| Admin       |         4 |      55000 |      32000 |   41750.00 |
++-------------+-----------+------------+------------+------------+
+
+============================================================
+
+-- 2. List the total salary payable to each dept. display the dept name and the total salary.
+select d.dname,
+       sum(e.salary) as total_salary
+from Dept d
+join Employee e on d.deptno = e.dept
+group by d.deptno, d.dname;
+
++-------------+--------------+
+| dname       | total_salary |
++-------------+--------------+
+| Executive   |       162000 |
+| Engineering |        21000 |
+| Research    |       158000 |
+| Sales       |        86000 |
+| Admin       |       167000 |
++-------------+--------------+
+
+============================================================
+
+-- 3. List the jobs and the number of employees in each job. The result should be in the descending order of the number of jobs.
+select job,
+       count(*) as emp_count
+from Employee
+group by job
+order by emp_count desc;
+
++--------------------+-----------+
+| job                | emp_count |
++--------------------+-----------+
+| Admin Officer      |         2 |
+| Salesperson        |         2 |
+| Analyst            |         2 |
+| Manager            |         2 |
+| Clerk              |         2 |
+| Research Associate |         1 |
+| HR Executive       |         1 |
+| President          |         1 |
+| Scientist          |         1 |
++--------------------+-----------+
+
+============================================================
+
+-- 4. List the jobwise total salary, average salary and minimum salary of employees.
+select job,
+       sum(salary) as total_salary,
+       round(avg(salary), 2) as avg_salary,
+       min(salary) as min_salary
+from Employee
+group by job;
+
++--------------------+--------------+------------+------------+
+| job                | total_salary | avg_salary | min_salary |
++--------------------+--------------+------------+------------+
+| Admin Officer      |        70000 |   35000.00 |      32000 |
+| Analyst            |        85000 |   42500.00 |      40000 |
+| Clerk              |        39000 |   19500.00 |      18000 |
+| HR Executive       |        42000 |   42000.00 |      42000 |
+| Manager            |       115000 |   57500.00 |      55000 |
+| President          |        95000 |   95000.00 |      95000 |
+| Research Associate |        35000 |   35000.00 |      35000 |
+| Salesperson        |        48000 |   24000.00 |      22000 |
+| Scientist          |        65000 |   65000.00 |      65000 |
++--------------------+--------------+------------+------------+
+
+============================================================
+
+-- 5. List the total salary of employees jobwise for research dept.
+select e.job,
+       sum(e.salary) as total_salary
+from Employee e
+join Dept d on e.dept = d.deptno
+where d.dname = 'Research'
+group by e.job;
+
++--------------------+--------------+
+| job                | total_salary |
++--------------------+--------------+
+| Analyst            |        40000 |
+| Clerk              |        18000 |
+| Research Associate |        35000 |
+| Scientist          |        65000 |
++--------------------+--------------+
+
+============================================================
+
+-- 6. List the job wise total salary, average salary of employees of 'admin' dept. Display only those jobs having average salary, average salary greater than 50000.
+select e.job,
+       sum(e.salary) as total_salary,
+       round(avg(e.salary), 2) as avg_salary
+from Employee e
+join Dept d on e.dept = d.deptno
+where d.dname = 'Admin'
+group by e.job
+having avg(e.salary) > 50000;
+
++---------+--------------+------------+
+| job     | total_salary | avg_salary |
++---------+--------------+------------+
+| Manager |        55000 |   55000.00 |
++---------+--------------+------------+
+
+============================================================
+
+-- 7. Retrieve the total number of projects controlled by every dept. Display the dept name, and the count.
+select d.dname,
+       count(p.proj_num) as project_count
+from Dept d
+join Project p on d.deptno = p.dnum
+group by d.deptno, d.dname;
+
++-------------+---------------+
+| dname       | project_count |
++-------------+---------------+
+| Executive   |             1 |
+| Engineering |             1 |
+| Research    |             2 |
+| Sales       |             2 |
+| Admin       |             2 |
++-------------+---------------+
+
+============================================================
+
+-- 8. Retrieve the total number of employees working on every project. Display the project no, name and the count.
+select p.proj_num,
+       p.pname,
+       count(w.eno) as emp_count
+from Project p
+join Emp_WorksOn_Project w on p.proj_num = w.pno
+group by p.proj_num, p.pname;
+
++----------+--------------------+-----------+
+| proj_num | pname              | emp_count |
++----------+--------------------+-----------+
+|        1 | Cloud Computing    |         4 |
+|        2 | DBMS               |         2 |
+|        3 | Computerization    |         5 |
+|        4 | E-Commerce         |         3 |
+|        5 | AI System          |         2 |
+|        6 | Research           |         4 |
+|        7 | Office Automation  |         2 |
+|        8 | Corporate Strategy |         2 |
++----------+--------------------+-----------+
+
+============================================================
+
+-- 9. Retrieve the total time (in hours) spent on every project.
+select p.proj_num,
+       p.pname,
+       sum(w.hours_per_week) as total_hours
+from Project p
+join Emp_WorksOn_Project w on p.proj_num = w.pno
+group by p.proj_num, p.pname;
+
++----------+--------------------+-------------+
+| proj_num | pname              | total_hours |
++----------+--------------------+-------------+
+|        1 | Cloud Computing    |          65 |
+|        2 | DBMS               |          40 |
+|        3 | Computerization    |          95 |
+|        4 | E-Commerce         |          50 |
+|        5 | AI System          |          40 |
+|        6 | Research           |          80 |
+|        7 | Office Automation  |          25 |
+|        8 | Corporate Strategy |          30 |
++----------+--------------------+-------------+
+
+============================================================
+
+-- 10. Retrieve the details of project with more than three employees working on it. Also display the average salary offered for that project.
+select p.proj_num,
+       p.pname,
+       p.location,
+       p.dnum,
+       count(distinct w.eno) as emp_count,
+       round(avg(e.salary), 2) as avg_salary
+from Project p
+join Emp_WorksOn_Project w on p.proj_num = w.pno
+join Employee e on w.eno = e.empno
+group by p.proj_num, p.pname, p.location, p.dnum
+having count(distinct w.eno) > 3;
+
++----------+-----------------+-----------+------+-----------+------------+
+| proj_num | pname           | location  | dnum | emp_count | avg_salary |
++----------+-----------------+-----------+------+-----------+------------+
+|        1 | Cloud Computing | Panaji    |   15 |         4 |   26500.00 |
+|        3 | Computerization | Bengalore |   40 |         5 |   45400.00 |
+|        6 | Research        | Vasco     |   20 |         4 |   39500.00 |
++----------+-----------------+-----------+------+-----------+------------+
+
+============================================================
+
+-- 11. For each dept having more than two female employees retrieve the maximum and minimum salary paid to the female employee.
+select d.dname,
+       max(e.salary) as max_female_salary,
+       min(e.salary) as min_female_salary
+from Dept d
+join Employee e on d.deptno = e.dept
+where e.gender = 'F'
+group by d.deptno, d.dname
+having count(*) > 2;
+
++----------+-------------------+-------------------+
+| dname    | max_female_salary | min_female_salary |
++----------+-------------------+-------------------+
+| Research |             65000 |             35000 |
+| Admin    |             42000 |             32000 |
++----------+-------------------+-------------------+
+
+============================================================
+
+-- 12. For each employee display the total number of projects he is working on, and also display the total time (hours per week) he spends on all projects.
+select e.empno,
+       e.empname,
+       count(w.pno) as total_projects,
+       sum(w.hours_per_week) as total_hours
+from Employee e
+join Emp_WorksOn_Project w on e.empno = w.eno
+group by e.empno, e.empname;
+
++-------+---------+----------------+-------------+
+| empno | empname | total_projects | total_hours |
++-------+---------+----------------+-------------+
+|     1 | Vibhav  |              1 |          20 |
+|     2 | Walsh   |              2 |          25 |
+|     3 | Faiz    |              3 |          55 |
+|     4 | Shubham |              2 |          27 |
+|     5 | Sparsh  |              1 |          25 |
+|     6 | Siya    |              2 |          38 |
+|     7 | Ananya  |              2 |          25 |
+|     8 | Rohan   |              1 |          30 |
+|     9 | Karan   |              2 |          35 |
+|    10 | Pooja   |              2 |          40 |
+|    11 | Riya    |              2 |          35 |
+|    12 | Sneha   |              1 |          10 |
+|    13 | Kavita  |              2 |          45 |
+|    14 | Tanvi   |              1 |          15 |
++-------+---------+----------------+-------------+
+
+============================================================
