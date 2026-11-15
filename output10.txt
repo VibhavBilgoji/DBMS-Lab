@@ -1,0 +1,192 @@
+-- 1. Write a procedure to get details of all projects.
+delimiter //
+create or replace procedure GetAllProjects()
+begin
+    select * from Project;
+end //
+delimiter ;
+
+call GetAllProjects();
+
++----------+--------------------+-----------+------+---------+-------------+----------+
+| proj_num | pname              | location  | dnum | pbudget | status      | duration |
++----------+--------------------+-----------+------+---------+-------------+----------+
+|        1 | Cloud Computing    | Panaji    |   15 |  450000 | Ongoing     |       12 |
+|        2 | DBMS               | Vasco     |   20 |  300000 | Completed   |        6 |
+|        3 | Computerization    | Bengalore |   40 |  800000 | Ongoing     |       24 |
+|        4 | E-Commerce         | Mumbai    |   30 |  550000 | Ongoing     |       18 |
+|        5 | AI System          | Porvorim  |   30 |  650000 | In Progress |       15 |
+|        6 | Research           | Vasco     |   20 |  700000 | Ongoing     |       36 |
+|        7 | Office Automation  | Bengalore |   40 |  250000 | Completed   |        8 |
+|        8 | Corporate Strategy | Mapusa    |   10 |  350000 | Completed   |       10 |
++----------+--------------------+-----------+------+---------+-------------+----------+
+
+============================================================
+
+-- 2. Write a procedure which accepts 'empid' as parameter and display his details.
+delimiter //
+create or replace procedure GetEmployeeDetails(in in_empid int)
+begin
+    select * from Employee where empno = in_empid;
+end //
+delimiter ;
+
+call GetEmployeeDetails(1);
+
++-------+---------+--------+-----------+-----------+------------+--------+------------+------+
+| empno | empname | gender | job       | managerno | hiredate   | salary | commission | dept |
++-------+---------+--------+-----------+-----------+------------+--------+------------+------+
+|     1 | Vibhav  | M      | President |      NULL | 2024-01-15 |  95000 |       NULL |   10 |
++-------+---------+--------+-----------+-----------+------------+--------+------------+------+
+
+============================================================
+
+-- 3. Write a procedure which accepts 'project_no' as parameter and display the controlling dept_no and no. of employees working on that project.
+delimiter //
+create or replace procedure GetProjectDeptAndEmpCount(in in_proj_num int)
+begin
+    select 
+        p.proj_num,
+        p.pname,
+        p.dnum as controlling_dept_no,
+        count(distinct w.eno) as no_of_employees
+    from Project p
+    left join Emp_WorksOn_Project w on p.proj_num = w.pno
+    where p.proj_num = in_proj_num
+    group by p.proj_num, p.pname, p.dnum;
+end //
+delimiter ;
+
+call GetProjectDeptAndEmpCount(3);
+
++----------+-----------------+---------------------+-----------------+
+| proj_num | pname           | controlling_dept_no | no_of_employees |
++----------+-----------------+---------------------+-----------------+
+|        3 | Computerization |                  40 |               5 |
++----------+-----------------+---------------------+-----------------+
+
+============================================================
+
+-- 4. Write procedure which accepts empid as an input and finds the salary and no. of projects he is working on if sal>50000 and no of projects his working on is >2 increase the salary by 5% if salary is between 50000>=60000 and no. of projects >2 increase salary by 2%, if sal>100000 and no of projects >=1 increase salary by 1%. Display empid,sal,no. of projects,increased salary.
+delimiter //
+create or replace procedure CalculateEmployeeSalaryIncrease(in in_empid int)
+begin
+    declare v_sal float;
+    declare v_proj int default 0;
+    declare v_inc_sal float;
+    
+    select salary into v_sal
+    from Employee
+    where empno = in_empid;
+    
+    select count(pno) into v_proj
+    from Emp_WorksOn_Project
+    where eno = in_empid;
+    
+    if v_sal > 100000 and v_proj >= 1 then
+        set v_inc_sal = round(v_sal * 1.01, 2);
+    elseif v_sal > 60000 and v_proj > 2 then
+        set v_inc_sal = round(v_sal * 1.05, 2);
+    elseif v_sal >= 50000 and v_sal <= 60000 and v_proj > 2 then
+        set v_inc_sal = round(v_sal * 1.02, 2);
+    else
+        set v_inc_sal = v_sal;
+    end if;
+    
+    select 
+        in_empid as empid,
+        v_sal as sal,
+        v_proj as no_of_projects,
+        v_inc_sal as increased_salary;
+end //
+delimiter ;
+
+call CalculateEmployeeSalaryIncrease(13);
+
++-------+-------+----------------+------------------+
+| empid | sal   | no_of_projects | increased_salary |
++-------+-------+----------------+------------------+
+|    13 | 65000 |              3 |            68250 |
++-------+-------+----------------+------------------+
+
+============================================================
+
+-- 5. Write a procedure which executes the same task as in procedure 4 but for all the employees in the database.
+delimiter //
+create or replace procedure CalculateAllEmployeesSalaryIncrease()
+begin
+    declare done int default false;
+    declare v_empid int;
+    declare v_empname varchar(25);
+    declare v_sal float;
+    declare v_proj int;
+    declare v_inc_sal float;
+    
+    declare cur cursor for 
+        select e.empno, e.empname, e.salary, count(w.pno) as proj_count
+        from Employee e
+        left join Emp_WorksOn_Project w on e.empno = w.eno
+        group by e.empno, e.empname, e.salary
+        order by e.empno;
+        
+    declare continue handler for not found set done = true;
+    
+    drop temporary table if exists Temp_Salary_Increase;
+    create temporary table Temp_Salary_Increase (
+        empid int,
+        empname varchar(25),
+        sal float,
+        no_of_projects int,
+        increased_salary float
+    );
+    
+    open cur;
+    
+    read_loop: loop
+        fetch cur into v_empid, v_empname, v_sal, v_proj;
+        if done then
+            leave read_loop;
+        end if;
+        
+        if v_sal > 100000 and v_proj >= 1 then
+            set v_inc_sal = round(v_sal * 1.01, 2);
+        elseif v_sal > 60000 and v_proj > 2 then
+            set v_inc_sal = round(v_sal * 1.05, 2);
+        elseif v_sal >= 50000 and v_sal <= 60000 and v_proj > 2 then
+            set v_inc_sal = round(v_sal * 1.02, 2);
+        else
+            set v_inc_sal = v_sal;
+        end if;
+        
+        insert into Temp_Salary_Increase values (v_empid, v_empname, v_sal, v_proj, v_inc_sal);
+    end loop;
+    
+    close cur;
+    
+    select empid, empname, sal, no_of_projects, increased_salary from Temp_Salary_Increase;
+    drop temporary table if exists Temp_Salary_Increase;
+end //
+delimiter ;
+
+call CalculateAllEmployeesSalaryIncrease();
+
++-------+---------+--------+----------------+------------------+
+| empid | empname | sal    | no_of_projects | increased_salary |
++-------+---------+--------+----------------+------------------+
+|     1 | Vibhav  |  95000 |              1 |            95000 |
+|     2 | Walsh   |  45000 |              2 |            45000 |
+|     3 | Smith   |  18000 |              3 |            18000 |
+|     4 | Shubham |  22000 |              2 |            22000 |
+|     5 | Sparsh  |  21000 |              1 |            21000 |
+|     6 | Siya    |  60000 |              2 |            60000 |
+|     7 | Ananya  |  32000 |              2 |            32000 |
+|     8 | Rohan   |  55000 |              3 |            56100 |
+|     9 | Karan   |  26000 |              2 |            26000 |
+|    10 | Pooja   |  40000 |              2 |            40000 |
+|    11 | Riya    |  38000 |              2 |            38000 |
+|    12 | Sneha   |  42000 |              1 |            42000 |
+|    13 | Kavita  |  65000 |              3 |            68250 |
+|    14 | Tanvi   |  35000 |              1 |            35000 |
+|    15 | Dev     | 120000 |              1 |           121200 |
++-------+---------+--------+----------------+------------------+
+

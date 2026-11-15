@@ -41,18 +41,29 @@ def parse_lab_file(filepath):
 
 def execute_sql(sql):
     """Executes SQL against MariaDB College database and returns formatted table output."""
-    cmd = ["sudo", "-S", "mariadb", "-u", "root", DB_NAME, "-t", "-e", sql]
-    proc = subprocess.run(
-        cmd,
-        input=f"{SUDO_PWD}\n",
-        text=True,
-        capture_output=True
-    )
-    if proc.returncode != 0 and proc.stderr:
-        # Filter out the [sudo] password prompt line
-        err_lines = [l for l in proc.stderr.splitlines() if "[sudo]" not in l]
-        return "\n".join(err_lines).strip()
-    return proc.stdout.strip()
+    if sys.platform == "win32":
+        cmd = ["mariadb", "-u", "root", DB_NAME, "-t", "-e", sql]
+        proc = subprocess.run(
+            cmd,
+            text=True,
+            capture_output=True
+        )
+        if proc.returncode != 0 and proc.stderr:
+            return proc.stderr.strip()
+        return proc.stdout.strip()
+    else:
+        cmd = ["sudo", "-S", "mariadb", "-u", "root", DB_NAME, "-t", "-e", sql]
+        proc = subprocess.run(
+            cmd,
+            input=f"{SUDO_PWD}\n",
+            text=True,
+            capture_output=True
+        )
+        if proc.returncode != 0 and proc.stderr:
+            # Filter out the [sudo] password prompt line
+            err_lines = [l for l in proc.stderr.splitlines() if "[sudo]" not in l]
+            return "\n".join(err_lines).strip()
+        return proc.stdout.strip()
 
 def print_separator(char="=", length=70):
     print(char * length)

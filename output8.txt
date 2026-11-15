@@ -1,0 +1,350 @@
+-- 1. Create a view containing the information about all employees belonging to admin department check if view is updatable.
+create or replace view Admin_Employees as
+select e.empno, e.empname, e.gender, e.job, e.managerno, e.hiredate, e.salary, e.commission, e.dept
+from Employee e
+join Dept d on e.dept = d.deptno
+where d.dname = 'Admin';
+
+select * from Admin_Employees;
+
+select table_name, is_updatable
+from information_schema.views
+where table_schema = 'College' and table_name = 'Admin_Employees';
+
++-------+---------+--------+---------------+-----------+------------+--------+------------+------+
+| empno | empname | gender | job           | managerno | hiredate   | salary | commission | dept |
++-------+---------+--------+---------------+-----------+------------+--------+------------+------+
+|     7 | Ananya  | F      | Admin Officer |         6 | 2025-06-01 |  32000 |       3000 |   40 |
+|     8 | Rohan   | M      | Manager       |         1 | 2024-08-15 |  55000 |       5000 |   40 |
+|    11 | Riya    | F      | Admin Officer |         8 | 2025-10-01 |  38000 |       2500 |   40 |
+|    12 | Sneha   | F      | HR Executive  |         8 | 2025-11-15 |  42000 |       NULL |   40 |
++-------+---------+--------+---------------+-----------+------------+--------+------------+------+
++-----------------+--------------+
+| table_name      | is_updatable |
++-----------------+--------------+
+| admin_employees | YES          |
++-----------------+--------------+
+
+============================================================
+
+-- 2. Create a view for every project containing project no, pname, pbudget, status, plocation, duration and the name, department name, salary of employees working on that project and the no. of hours employee works on the project and check if the view is updatable
+create or replace view Project_Employee_Details as
+select 
+    p.proj_num,
+    p.pname,
+    p.pbudget,
+    p.status,
+    p.location as plocation,
+    p.duration,
+    e.empname,
+    d.dname,
+    e.salary,
+    w.hours_per_week
+from Project p
+join Emp_WorksOn_Project w on p.proj_num = w.pno
+join Employee e on w.eno = e.empno
+join Dept d on e.dept = d.deptno;
+
+select * from Project_Employee_Details;
+
+select table_name, is_updatable
+from information_schema.views
+where table_schema = 'College' and table_name = 'Project_Employee_Details';
+
++----------+--------------------+---------+-------------+-----------+----------+---------+-------------+--------+----------------+
+| proj_num | pname              | pbudget | status      | plocation | duration | empname | dname       | salary | hours_per_week |
++----------+--------------------+---------+-------------+-----------+----------+---------+-------------+--------+----------------+
+|        3 | Computerization    |  800000 | Ongoing     | Bengalore |       24 | Ananya  | Admin       |  32000 |             15 |
+|        7 | Office Automation  |  250000 | Completed   | Bengalore |        8 | Ananya  | Admin       |  32000 |             10 |
+|        3 | Computerization    |  800000 | Ongoing     | Bengalore |       24 | Rohan   | Admin       |  55000 |             30 |
+|        3 | Computerization    |  800000 | Ongoing     | Bengalore |       24 | Riya    | Admin       |  38000 |             20 |
+|        7 | Office Automation  |  250000 | Completed   | Bengalore |        8 | Riya    | Admin       |  38000 |             15 |
+|        3 | Computerization    |  800000 | Ongoing     | Bengalore |       24 | Sneha   | Admin       |  42000 |             10 |
+|        1 | Cloud Computing    |  450000 | Ongoing     | Panaji    |       12 | Sparsh  | Engineering |  21000 |             25 |
+|        8 | Corporate Strategy |  350000 | Completed   | Mapusa    |       10 | Vibhav  | Executive   |  95000 |             20 |
+|        1 | Cloud Computing    |  450000 | Ongoing     | Panaji    |       12 | Walsh   | Executive   |  45000 |             15 |
+|        8 | Corporate Strategy |  350000 | Completed   | Mapusa    |       10 | Walsh   | Executive   |  45000 |             10 |
+|        1 | Cloud Computing    |  450000 | Ongoing     | Panaji    |       12 | Shubham | Executive   |  22000 |             15 |
+|        4 | E-Commerce         |  550000 | Ongoing     | Mumbai    |       18 | Shubham | Executive   |  22000 |             12 |
+|        1 | Cloud Computing    |  450000 | Ongoing     | Panaji    |       12 | Smith   | Research    |  18000 |             10 |
+|        2 | DBMS               |  300000 | Completed   | Vasco     |        6 | Smith   | Research    |  18000 |             25 |
+|        6 | Research           |  700000 | Ongoing     | Vasco     |       36 | Smith   | Research    |  18000 |             20 |
+|        2 | DBMS               |  300000 | Completed   | Vasco     |        6 | Pooja   | Research    |  40000 |             15 |
+|        6 | Research           |  700000 | Ongoing     | Vasco     |       36 | Pooja   | Research    |  40000 |             25 |
+|        5 | AI System          |  650000 | In Progress | Porvorim  |       15 | Kavita  | Research    |  65000 |             25 |
+|        6 | Research           |  700000 | Ongoing     | Vasco     |       36 | Kavita  | Research    |  65000 |             20 |
+|        6 | Research           |  700000 | Ongoing     | Vasco     |       36 | Tanvi   | Research    |  35000 |             15 |
+|        3 | Computerization    |  800000 | Ongoing     | Bengalore |       24 | Siya    | Sales       |  60000 |             20 |
+|        4 | E-Commerce         |  550000 | Ongoing     | Mumbai    |       18 | Siya    | Sales       |  60000 |             18 |
+|        4 | E-Commerce         |  550000 | Ongoing     | Mumbai    |       18 | Karan   | Sales       |  26000 |             20 |
+|        5 | AI System          |  650000 | In Progress | Porvorim  |       15 | Karan   | Sales       |  26000 |             15 |
++----------+--------------------+---------+-------------+-----------+----------+---------+-------------+--------+----------------+
++--------------------------+--------------+
+| table_name               | is_updatable |
++--------------------------+--------------+
+| project_employee_details | YES          |
++--------------------------+--------------+
+
+============================================================
+
+-- 3. Create a view to store the number of employees belonging to every department ,their average salary and name of the department and check if the view is updatable
+create or replace view Dept_Employee_Stats as
+select 
+    d.dname,
+    count(e.empno) as emp_count,
+    round(avg(e.salary), 2) as avg_salary
+from Dept d
+left join Employee e on d.deptno = e.dept
+group by d.deptno, d.dname;
+
+select * from Dept_Employee_Stats;
+
+select table_name, is_updatable
+from information_schema.views
+where table_schema = 'College' and table_name = 'Dept_Employee_Stats';
+
++-------------+-----------+------------+
+| dname       | emp_count | avg_salary |
++-------------+-----------+------------+
+| Executive   |         3 |   54000.00 |
+| Engineering |         1 |   21000.00 |
+| Research    |         4 |   39500.00 |
+| Sales       |         2 |   43000.00 |
+| Admin       |         4 |   41750.00 |
++-------------+-----------+------------+
++---------------------+--------------+
+| table_name          | is_updatable |
++---------------------+--------------+
+| dept_employee_stats | NO           |
++---------------------+--------------+
+
+============================================================
+
+-- 4. Create a view to store name, empid, salary and also the details of project he works on like pno, pname, hours and status
+create or replace view Emp_Project_Details as
+select 
+    e.empname,
+    e.empno as empid,
+    e.salary,
+    p.proj_num as pno,
+    p.pname,
+    w.hours_per_week as hours,
+    p.status
+from Employee e
+join Emp_WorksOn_Project w on e.empno = w.eno
+join Project p on w.pno = p.proj_num;
+
+select * from Emp_Project_Details;
+
++---------+-------+--------+-----+--------------------+-------+-------------+
+| empname | empid | salary | pno | pname              | hours | status      |
++---------+-------+--------+-----+--------------------+-------+-------------+
+| Vibhav  |     1 |  95000 |   8 | Corporate Strategy |    20 | Completed   |
+| Walsh   |     2 |  45000 |   1 | Cloud Computing    |    15 | Ongoing     |
+| Walsh   |     2 |  45000 |   8 | Corporate Strategy |    10 | Completed   |
+| Smith   |     3 |  18000 |   1 | Cloud Computing    |    10 | Ongoing     |
+| Smith   |     3 |  18000 |   2 | DBMS               |    25 | Completed   |
+| Smith   |     3 |  18000 |   6 | Research           |    20 | Ongoing     |
+| Shubham |     4 |  22000 |   1 | Cloud Computing    |    15 | Ongoing     |
+| Shubham |     4 |  22000 |   4 | E-Commerce         |    12 | Ongoing     |
+| Sparsh  |     5 |  21000 |   1 | Cloud Computing    |    25 | Ongoing     |
+| Siya    |     6 |  60000 |   3 | Computerization    |    20 | Ongoing     |
+| Siya    |     6 |  60000 |   4 | E-Commerce         |    18 | Ongoing     |
+| Ananya  |     7 |  32000 |   3 | Computerization    |    15 | Ongoing     |
+| Ananya  |     7 |  32000 |   7 | Office Automation  |    10 | Completed   |
+| Rohan   |     8 |  55000 |   3 | Computerization    |    30 | Ongoing     |
+| Karan   |     9 |  26000 |   4 | E-Commerce         |    20 | Ongoing     |
+| Karan   |     9 |  26000 |   5 | AI System          |    15 | In Progress |
+| Pooja   |    10 |  40000 |   2 | DBMS               |    15 | Completed   |
+| Pooja   |    10 |  40000 |   6 | Research           |    25 | Ongoing     |
+| Riya    |    11 |  38000 |   3 | Computerization    |    20 | Ongoing     |
+| Riya    |    11 |  38000 |   7 | Office Automation  |    15 | Completed   |
+| Sneha   |    12 |  42000 |   3 | Computerization    |    10 | Ongoing     |
+| Kavita  |    13 |  65000 |   5 | AI System          |    25 | In Progress |
+| Kavita  |    13 |  65000 |   6 | Research           |    20 | Ongoing     |
+| Tanvi   |    14 |  35000 |   6 | Research           |    15 | Ongoing     |
++---------+-------+--------+-----+--------------------+-------+-------------+
+
+============================================================
+
+-- 5. Using the view created above create another view to store the no. of employees working on every project and total hours spent on that project
+create or replace view Project_Emp_Hours as
+select 
+    pno,
+    pname,
+    count(distinct empid) as emp_count,
+    sum(hours) as total_hours
+from Emp_Project_Details
+group by pno, pname;
+
+select * from Project_Emp_Hours;
+
++-----+--------------------+-----------+-------------+
+| pno | pname              | emp_count | total_hours |
++-----+--------------------+-----------+-------------+
+|   1 | Cloud Computing    |         4 |          65 |
+|   2 | DBMS               |         2 |          40 |
+|   3 | Computerization    |         5 |          95 |
+|   4 | E-Commerce         |         3 |          50 |
+|   5 | AI System          |         2 |          40 |
+|   6 | Research           |         4 |          80 |
+|   7 | Office Automation  |         2 |          25 |
+|   8 | Corporate Strategy |         2 |          30 |
++-----+--------------------+-----------+-------------+
+
+============================================================
+
+-- 6. Using the view created in question 4 create another view to store the no. of projects each employee works on and the total hours
+create or replace view Emp_Project_Count_Hours as
+select 
+    empid,
+    empname,
+    count(pno) as no_of_projects,
+    sum(hours) as total_hours
+from Emp_Project_Details
+group by empid, empname;
+
+select * from Emp_Project_Count_Hours;
+
++-------+---------+----------------+-------------+
+| empid | empname | no_of_projects | total_hours |
++-------+---------+----------------+-------------+
+|     1 | Vibhav  |              1 |          20 |
+|     2 | Walsh   |              2 |          25 |
+|     3 | Smith   |              3 |          55 |
+|     4 | Shubham |              2 |          27 |
+|     5 | Sparsh  |              1 |          25 |
+|     6 | Siya    |              2 |          38 |
+|     7 | Ananya  |              2 |          25 |
+|     8 | Rohan   |              1 |          30 |
+|     9 | Karan   |              2 |          35 |
+|    10 | Pooja   |              2 |          40 |
+|    11 | Riya    |              2 |          35 |
+|    12 | Sneha   |              1 |          10 |
+|    13 | Kavita  |              2 |          45 |
+|    14 | Tanvi   |              1 |          15 |
++-------+---------+----------------+-------------+
+
+============================================================
+
+-- 7. Create a temporary table to store the details of project located at banglore along with employees details working on it.
+create temporary table if not exists Bangalore_Project_Employees as
+select 
+    p.proj_num,
+    p.pname,
+    p.location as plocation,
+    p.pbudget,
+    p.status,
+    p.duration,
+    e.empno,
+    e.empname,
+    e.job,
+    e.salary,
+    w.hours_per_week
+from Project p
+join Emp_WorksOn_Project w on p.proj_num = w.pno
+join Employee e on w.eno = e.empno
+where p.location in ('Bangalore', 'Bengalore');
+
+select * from Bangalore_Project_Employees;
+
++----------+-------------------+-----------+---------+-----------+----------+-------+---------+---------------+--------+----------------+
+| proj_num | pname             | plocation | pbudget | status    | duration | empno | empname | job           | salary | hours_per_week |
++----------+-------------------+-----------+---------+-----------+----------+-------+---------+---------------+--------+----------------+
+|        3 | Computerization   | Bengalore |  800000 | Ongoing   |       24 |     6 | Siya    | Manager       |  60000 |             20 |
+|        3 | Computerization   | Bengalore |  800000 | Ongoing   |       24 |     7 | Ananya  | Admin Officer |  32000 |             15 |
+|        7 | Office Automation | Bengalore |  250000 | Completed |        8 |     7 | Ananya  | Admin Officer |  32000 |             10 |
+|        3 | Computerization   | Bengalore |  800000 | Ongoing   |       24 |     8 | Rohan   | Manager       |  55000 |             30 |
+|        3 | Computerization   | Bengalore |  800000 | Ongoing   |       24 |    11 | Riya    | Admin Officer |  38000 |             20 |
+|        7 | Office Automation | Bengalore |  250000 | Completed |        8 |    11 | Riya    | Admin Officer |  38000 |             15 |
+|        3 | Computerization   | Bengalore |  800000 | Ongoing   |       24 |    12 | Sneha   | HR Executive  |  42000 |             10 |
++----------+-------------------+-----------+---------+-----------+----------+-------+---------+---------------+--------+----------------+
+
+============================================================
+
+-- 8. Using the temporary table above find the employees working all projects located at banglore.
+create temporary table if not exists Bangalore_Project_Employees as
+select 
+    p.proj_num,
+    p.pname,
+    p.location as plocation,
+    p.pbudget,
+    p.status,
+    p.duration,
+    e.empno,
+    e.empname,
+    e.job,
+    e.salary,
+    w.hours_per_week
+from Project p
+join Emp_WorksOn_Project w on p.proj_num = w.pno
+join Employee e on w.eno = e.empno
+where p.location in ('Bangalore', 'Bengalore');
+
+select empno, empname
+from Bangalore_Project_Employees
+group by empno, empname
+having count(distinct proj_num) = (
+    select count(distinct proj_num)
+    from Bangalore_Project_Employees
+);
+
++-------+---------+
+| empno | empname |
++-------+---------+
+|     7 | Ananya  |
+|    11 | Riya    |
++-------+---------+
+
+============================================================
+
+-- 9. Using the views created above: 1. Find the project with a minimum no. of employees working on it.
+select pno, pname, emp_count
+from Project_Emp_Hours
+where emp_count = (
+    select min(emp_count)
+    from Project_Emp_Hours
+);
+
++-----+--------------------+-----------+
+| pno | pname              | emp_count |
++-----+--------------------+-----------+
+|   2 | DBMS               |         2 |
+|   5 | AI System          |         2 |
+|   7 | Office Automation  |         2 |
+|   8 | Corporate Strategy |         2 |
++-----+--------------------+-----------+
+
+============================================================
+
+-- 10. Using the views created above: 2. Find the employees who works on the maximum projects
+select empid, empname, no_of_projects
+from Emp_Project_Count_Hours
+where no_of_projects = (
+    select max(no_of_projects)
+    from Emp_Project_Count_Hours
+);
+
++-------+---------+----------------+
+| empid | empname | no_of_projects |
++-------+---------+----------------+
+|     3 | Smith   |              3 |
++-------+---------+----------------+
+
+============================================================
+
+-- 11. Using the views created above: 3. Find the department with average salary greater than average offered by company
+select dname, avg_salary
+from Dept_Employee_Stats
+where avg_salary > (
+    select avg(salary)
+    from Employee
+);
+
++-----------+------------+
+| dname     | avg_salary |
++-----------+------------+
+| Executive |   54000.00 |
+| Sales     |   43000.00 |
++-----------+------------+
+
