@@ -5,6 +5,17 @@ create user if not exists 'emp3'@'localhost' identified by 'emp3';
 
 select user, host from mysql.user where user in ('emp1', 'emp2', 'emp3');
 
+C:\Users\Vibhav> mariadb -u root College
+MariaDB [College]> create user if not exists 'emp1'@'localhost' identified by 'emp1';
+Query OK, 0 rows affected (0.002 sec)
+
+MariaDB [College]> create user if not exists 'emp2'@'localhost' identified by 'emp2';
+Query OK, 0 rows affected (0.002 sec)
+
+MariaDB [College]> create user if not exists 'emp3'@'localhost' identified by 'emp3';
+Query OK, 0 rows affected (0.002 sec)
+
+MariaDB [College]> select user, host from mysql.user where user in ('emp1', 'emp2', 'emp3');
 +------+-----------+
 | User | Host      |
 +------+-----------+
@@ -12,6 +23,7 @@ select user, host from mysql.user where user in ('emp1', 'emp2', 'emp3');
 | emp2 | localhost |
 | emp3 | localhost |
 +------+-----------+
+3 rows in set (0.001 sec)
 
 ============================================================
 
@@ -20,13 +32,18 @@ grant all privileges on College.admin_employees to 'emp1'@'localhost';
 
 show grants for 'emp1'@'localhost';
 
+C:\Users\Vibhav> mariadb -u root College
+MariaDB [College]> grant all privileges on College.admin_employees to 'emp1'@'localhost';
+Query OK, 0 rows affected (0.001 sec)
+
+MariaDB [College]> show grants for 'emp1'@'localhost';
 +-------------------------------------------------------------------------------------------------------------+
 | Grants for emp1@localhost                                                                                   |
 +-------------------------------------------------------------------------------------------------------------+
 | GRANT USAGE ON *.* TO `emp1`@`localhost` IDENTIFIED BY PASSWORD '*43AD03739E7F323E88008E46522A56488E317EE2' |
-| GRANT SELECT (`dept`, `empname`), UPDATE (`dept`, `empname`) ON `college`.`employee` TO `emp1`@`localhost`  |
 | GRANT ALL PRIVILEGES ON `college`.`admin_employees` TO `emp1`@`localhost`                                   |
 +-------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.000 sec)
 
 ============================================================
 
@@ -35,12 +52,18 @@ grant select (empname, dept), update (empname, dept) on College.Employee to 'emp
 
 show grants for 'emp2'@'localhost';
 
+C:\Users\Vibhav> mariadb -u root College
+MariaDB [College]> grant select (empname, dept), update (empname, dept) on College.Employee to 'emp2'@'localhost' with grant option;
+Query OK, 0 rows affected (0.001 sec)
+
+MariaDB [College]> show grants for 'emp2'@'localhost';
 +------------------------------------------------------------------------------------------------------------------------------+
 | Grants for emp2@localhost                                                                                                    |
 +------------------------------------------------------------------------------------------------------------------------------+
 | GRANT USAGE ON *.* TO `emp2`@`localhost` IDENTIFIED BY PASSWORD '*218ACF535F8AF4BB1C57EA0F7992D1B979D5BBE4'                  |
-| GRANT SELECT (`dept`, `empname`), UPDATE (`dept`, `empname`) ON `college`.`employee` TO `emp2`@`localhost` WITH GRANT OPTION |
+| GRANT SELECT (`empname`, `dept`), UPDATE (`empname`, `dept`) ON `college`.`employee` TO `emp2`@`localhost` WITH GRANT OPTION |
 +------------------------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.000 sec)
 
 ============================================================
 
@@ -49,13 +72,25 @@ grant select (empname, dept), update (empname, dept) on College.Employee to 'emp
 
 show grants for 'emp1'@'localhost';
 
+C:\Users\Vibhav> mariadb -u emp2 -p College
+Enter password: ****
+
+MariaDB [College]> grant select (empname, dept), update (empname, dept) on College.Employee to 'emp1'@'localhost';
+Query OK, 0 rows affected (0.001 sec)
+
+MariaDB [College]> exit
+Bye
+
+C:\Users\Vibhav> mariadb -u root College
+MariaDB [College]> show grants for 'emp1'@'localhost';
 +-------------------------------------------------------------------------------------------------------------+
 | Grants for emp1@localhost                                                                                   |
 +-------------------------------------------------------------------------------------------------------------+
 | GRANT USAGE ON *.* TO `emp1`@`localhost` IDENTIFIED BY PASSWORD '*43AD03739E7F323E88008E46522A56488E317EE2' |
-| GRANT SELECT (`dept`, `empname`), UPDATE (`dept`, `empname`) ON `college`.`employee` TO `emp1`@`localhost`  |
+| GRANT SELECT (`empname`, `dept`), UPDATE (`empname`, `dept`) ON `college`.`employee` TO `emp1`@`localhost`  |
 | GRANT ALL PRIVILEGES ON `college`.`admin_employees` TO `emp1`@`localhost`                                   |
 +-------------------------------------------------------------------------------------------------------------+
+3 rows in set (0.000 sec)
 
 ============================================================
 
@@ -64,37 +99,68 @@ grant all privileges on *.* to 'emp3'@'localhost' with grant option;
 
 show grants for 'emp3'@'localhost';
 
+C:\Users\Vibhav> mariadb -u root College
+MariaDB [College]> grant all privileges on *.* to 'emp3'@'localhost' with grant option;
+Query OK, 0 rows affected (0.001 sec)
+
+MariaDB [College]> show grants for 'emp3'@'localhost';
 +----------------------------------------------------------------------------------------------------------------------------------------+
 | Grants for emp3@localhost                                                                                                              |
 +----------------------------------------------------------------------------------------------------------------------------------------+
 | GRANT ALL PRIVILEGES ON *.* TO `emp3`@`localhost` IDENTIFIED BY PASSWORD '*038898F21D0F272255D9C5F979D8397A3EBC9CA0' WITH GRANT OPTION |
 +----------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.000 sec)
 
 ============================================================
 
 -- 6. Login and check the privilages.
 show grants for 'emp1'@'localhost';
+
 show grants for 'emp2'@'localhost';
+
 show grants for 'emp3'@'localhost';
 
+C:\Users\Vibhav> mariadb -u emp1 -p College
+Enter password: ****
+
+MariaDB [College]> show grants;
 +-------------------------------------------------------------------------------------------------------------+
 | Grants for emp1@localhost                                                                                   |
 +-------------------------------------------------------------------------------------------------------------+
 | GRANT USAGE ON *.* TO `emp1`@`localhost` IDENTIFIED BY PASSWORD '*43AD03739E7F323E88008E46522A56488E317EE2' |
-| GRANT SELECT (`dept`, `empname`), UPDATE (`dept`, `empname`) ON `college`.`employee` TO `emp1`@`localhost`  |
+| GRANT SELECT (`empname`, `dept`), UPDATE (`empname`, `dept`) ON `college`.`employee` TO `emp1`@`localhost`  |
 | GRANT ALL PRIVILEGES ON `college`.`admin_employees` TO `emp1`@`localhost`                                   |
 +-------------------------------------------------------------------------------------------------------------+
+3 rows in set (0.000 sec)
+
+MariaDB [College]> exit
+Bye
+
+C:\Users\Vibhav> mariadb -u emp2 -p College
+Enter password: ****
+
+MariaDB [College]> show grants;
 +------------------------------------------------------------------------------------------------------------------------------+
 | Grants for emp2@localhost                                                                                                    |
 +------------------------------------------------------------------------------------------------------------------------------+
 | GRANT USAGE ON *.* TO `emp2`@`localhost` IDENTIFIED BY PASSWORD '*218ACF535F8AF4BB1C57EA0F7992D1B979D5BBE4'                  |
-| GRANT SELECT (`dept`, `empname`), UPDATE (`dept`, `empname`) ON `college`.`employee` TO `emp2`@`localhost` WITH GRANT OPTION |
+| GRANT SELECT (`empname`, `dept`), UPDATE (`empname`, `dept`) ON `college`.`employee` TO `emp2`@`localhost` WITH GRANT OPTION |
 +------------------------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.000 sec)
+
+MariaDB [College]> exit
+Bye
+
+C:\Users\Vibhav> mariadb -u emp3 -p College
+Enter password: ****
+
+MariaDB [College]> show grants;
 +----------------------------------------------------------------------------------------------------------------------------------------+
 | Grants for emp3@localhost                                                                                                              |
 +----------------------------------------------------------------------------------------------------------------------------------------+
 | GRANT ALL PRIVILEGES ON *.* TO `emp3`@`localhost` IDENTIFIED BY PASSWORD '*038898F21D0F272255D9C5F979D8397A3EBC9CA0' WITH GRANT OPTION |
 +----------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.000 sec)
 
 ============================================================
 
@@ -103,18 +169,26 @@ revoke all privileges on College.admin_employees from 'emp1'@'localhost';
 
 show grants for 'emp1'@'localhost';
 
+C:\Users\Vibhav> mariadb -u root College
+MariaDB [College]> revoke all privileges on College.admin_employees from 'emp1'@'localhost';
+Query OK, 0 rows affected (0.001 sec)
+
+MariaDB [College]> show grants for 'emp1'@'localhost';
 +-------------------------------------------------------------------------------------------------------------+
 | Grants for emp1@localhost                                                                                   |
 +-------------------------------------------------------------------------------------------------------------+
 | GRANT USAGE ON *.* TO `emp1`@`localhost` IDENTIFIED BY PASSWORD '*43AD03739E7F323E88008E46522A56488E317EE2' |
-| GRANT SELECT (`dept`, `empname`), UPDATE (`dept`, `empname`) ON `college`.`employee` TO `emp1`@`localhost`  |
+| GRANT SELECT (`empname`, `dept`), UPDATE (`empname`, `dept`) ON `college`.`employee` TO `emp1`@`localhost`  |
 +-------------------------------------------------------------------------------------------------------------+
+2 rows in set (0.000 sec)
 
 ============================================================
 
 -- 8. Provide a list of various privilages available to the user.
 show privileges;
 
+C:\Users\Vibhav> mariadb -u root College
+MariaDB [College]> show privileges;
 +--------------------------+---------------------------------------+--------------------------------------------------------------------------------+
 | Privilege                | Context                               | Comment                                                                        |
 +--------------------------+---------------------------------------+--------------------------------------------------------------------------------+
@@ -161,6 +235,7 @@ show privileges;
 | Usage                    | Server Admin                          | No privileges - allow connect only                                             |
 | Show Create Routine      | Databases,Functions,Procedures        | To allow SHOW CREATE PROCEDURE/FUNCTION/PACKAGE                                |
 +--------------------------+---------------------------------------+--------------------------------------------------------------------------------+
+42 rows in set (0.000 sec)
 
 ============================================================
 
@@ -169,9 +244,15 @@ create index if not exists idx_empid on Employee(empno);
 
 show index from Employee where Key_name = 'idx_empid';
 
+C:\Users\Vibhav> mariadb -u root College
+MariaDB [College]> create index if not exists idx_empid on Employee(empno);
+Query OK, 0 rows affected (0.012 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [College]> show index from Employee where Key_name = 'idx_empid';
 +----------+------------+-----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+
 | Table    | Non_unique | Key_name  | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Ignored |
 +----------+------------+-----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+
-| employee |          1 | idx_empid |            1 | empno       | A         |          15 |     NULL | NULL   |      | BTREE      |         |               | NO      |
+| employee |          1 | idx_empid |            1 | empno       | A         |          14 |     NULL | NULL   |      | BTREE      |         |               | NO      |
 +----------+------------+-----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+
-
+1 row in set (0.000 sec)
